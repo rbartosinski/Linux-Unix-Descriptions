@@ -1583,13 +1583,13 @@ vault.centos.org
 - update vs upgrade - usunięcie przestarzałych plików
 
     
-    yum list tuned                                      / pokaże zainstalowane paczki
-    yum search tuned
-    yum provides top
-    yum provides firewalld
-    yum provides  ....
-    
-    yum list installed
+        yum list tuned                                      / pokaże zainstalowane paczki
+        yum search tuned
+        yum provides top
+        yum provides firewalld
+        yum provides  ....
+        
+        yum list installed
 
 
 yumdownloader procps-ng
