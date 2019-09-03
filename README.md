@@ -8,8 +8,12 @@
 4. [NFS - Network File System](#question4)
 5. [Samba](#question5)
 6. [iSCSI - Internet Small Computer Systems Interface](#question6)
-7. [systemd/init](#question7)
-8. [Samba](#question8)
+7. [Systemd/Init](#question7)
+8. [Journald - Systemd log](#question8)
+9. [Monitoring - CPU](#question9)
+10. [Journald - Systemd log](#question10)
+11. [Journald - Systemd log](#question11)
+12. [Journald - Systemd log](#question12)
 
 
 <a name="question1"></a>
@@ -19,50 +23,49 @@ Wszystko w Linuxach ma reprezentację w postaci pliku np. pliki; katalogi; urzą
 
 File system tree - Filesystem Hierarchy Standard (FHS) - definiuje standardy nazw; root - punkt poczatkowy.
 
-    /
-    
-najwyższy poziom systemu plików
+`/`
+    najwyższy poziom systemu plików
 
-    /boot
+`/boot`
 kernel, konfiguracja bootowania
 
-    /etc
+`/etc`
 pliki konfiguracji systemu
 
-    /root
+`/root`
 home directory użytkownika root
 
-    /media
+`/media`
 nośniki usuwalne DVD, CD, USB
 
-    /mnt
+`/mnt`
 sieciowy system plikow
 
-    /opt
+`/opt`
 optional soft, add-on packages (pakiety dodatkowe)
 
-    /usr
+`/usr`
 programy, konfiguracje, nagłówki, biblioteki - user file system
 
-    /usr/bin
+`/usr/bin`
 krytyczne pliki binarne dla systemu operacyjnego
 
-    /usr/sbin
+`/usr/sbin`
 pliki binarne administratora
 
-    /var
+`/var`
 variable data, prints, maile, logi
 
-    /dev
+`/dev`
 device file system - show all conn devices
 
-    /proc
+`/proc`
 process file system - runnings state of the kernel, processes and memory info
 
-    /sys
+`/sys`
 system file system - pomaga zarządzać podłączonym hardware
 
-    /tmp
+`/tmp`
 podręczne - nie powinno się zakładać że info w tmp będzie przechowywane pomiędzy uruchomieniami
 
 
@@ -746,7 +749,7 @@ klaster może zapobiec takiemu uszkodzeniu
 
 
 <a name="question7"></a>
-## 7. systemd/init
+## 7. Systemd/Init
 
 
 ### Start komputera:
@@ -766,7 +769,7 @@ odpowiedzialność kernela - organizowanie i uporządkowanie usług systemowych 
 **_przekazanie i przedstawienie użytkownikowi sprawnego użytecznego systemu_**
 
 
-### nitd (system V)
+### initd (system V)
 użycie skryptów do inicjacji systemu
 
 ### systemd
@@ -878,6 +881,52 @@ execstart = program binarny ktory będzie uruchomiony
 
 Restart=on-failure
 
+       39  systemctl enable httpd
+      104  cd /usr/lib/systemd/system
+      105  ls
+      106  cd /var/run/systemd/system
+      107  ls
+      109  cat session-1.scope.d
+      110  cd session-1.scope.d
+      111  ls
+      112  more 50-After-systemd-logind\\x2eservice.conf 
+      113  more 50-Description.conf 
+      114  cd ..
+      115  ls
+      116  w
+      117  cd /etc/systemd/system
+      118  ls
+      119  grep http
+      120  systemctl stop httpd
+      121  systemctl disable httpd
+      122  cd multi-user.target.wants/
+      123  ls
+      124  systemctl enable httpd
+      125  ls
+      126  grep htt
+      127  ls grep http
+      128  ls |  grep http
+      129  systemctl start httpd
+      130  vim /usr/lib/systemd/system/httpd.service 
+      131  systemctl show httpd
+      132  cp /usr/lib/systemd/system/httpd.service /etc/systemd/system
+      133  ls
+      134  cd..
+      135  cd ...
+      136  cd ..
+      137  ls
+      138  cd ..
+      140  systemctl daemon-reload
+      141  systemctl restart httpd
+      142  systemctl status httpd
+      146  vi /etc/systemd/system/httpd.service
+      147  systemctl daemon-reload
+      148  killall httpd
+      149  ps -aux | grep http
+      150  systemctl status httpd
+      151  systemctl --type=socket
+      152  systemctl
+
 
 ### 2) targets - synonim poziomów działania 
 wcześniej były levele. 6 poziomów działania systemów, na których były uruchamane poszczegolne usługi, których wymagał system
@@ -900,13 +949,17 @@ predefiniowane zbiory unitów  w poszczególnych stanach
 3. suspend - saves state in RAM & low power mode
 
 
-    sytsemctl list-units --type target --all
-    
 na liście wszystkich targetów są też targety typou system wyłączony, tryb awaryjny, itd. 
 
+    sytsemctl list-units --type target --all
 
-    systemctl set-deafult np reboot
+Zmiana targetu:
 
+    40  ls -lah multi-user.target.wants/
+    41  systemctl set-default rescue
+    41  systemctl set-default graphical
+    42  systemctl get-default 
+    43  ls -lah /etc/systemd/system/default.target
 
 
 ### 3) control groups
@@ -930,6 +983,183 @@ dopasowywanie zasobów systemu do swoich potrzeb
 
 
 
+<a name="question8"></a>
+## 8. Journald - Systemd log
+
+usługa journald - kolekcja logów z kilku źródeł:
+- kernel
+- syslog
+- sd_journal_print
+- stdout and stderr z usług
+
+domyślnie: runtime info only
+
+dane dziennika ustrukturyzowane i indeksowane
+
+    journalctl
+    systemd-cgls
+    systemd-cgtop 
+
+
+**search globally for matches to the regular expression re, and print lines where they are found
+
+    grep -i (ignore)
+    grep -i mem
+    systemctl show http | grep -i mem           (memory)
+
+    vi /etc/systemd/system/httpd.service
+
+nadpisanie pliku znajdującego się w usr/lib/systemd/system
+
+przy ponownym uruchomieniu nie będzie działać
+
+plik binarny journal
+
+    mkdir -p /var/log/journal
+    systemctl restart systemd-journald
+    
+    journalctl -f  (f - przytrzymanie; praca na innym terminalu i logi dot tego)
+    journalctl -o verbose
+
+danych odczytanych z dziennika verbose można kolejno użyć do zapytania dla dziennika
+
+    journalctl _UID=1000
+    journalctl _PID=1
+    
+    journalctl _SYSTEMD_UNIT=sshd.service
+    journalctl -u firewalld
+    
+    journalctl --since "1 hour ago"
+    journalctl --since "2 hours ago"
+    journalctl --since "2 minutes ago"        (ew. error timeparse)
+    
+    journalctl --since 08:57:10
+    
+Manual journald:
+
+    man systemd.journal-fields
 
 
 
+<a name="question9"></a>
+## 9. 
+
+
+monitoring and performace
+
+
+CPU concepts
+
+executing tasks
+
+cpu memory topology:
+
+SMP - Symmetric Multi-Process (single memory space, której procesy mogą przydzielać pamięć (allocate))
+ograniczone możliwości skalowania
+stała wydajność
+
+NUMA - Non-Uniform Memory Access
+sekcje fizycznej pamięci są kontrolowane przez jeden lub wiele procesorów - tzw numa nodes - węzły
+każdy węeł zarządza swoim rozmiarem pamięci
+os zobaczy wszystkie procesory w ich węzłach numa, zobaczy także każdą pamięć
+
+faworyzacja procesów na węźle lokalnym (zdalny wolniej)
+poszukiwać pamięci zewnętrznej która może hamować wydajność
+
+systemy wiedzą o numa
+
+
+scheduler - wątki
+planuje zadania  - nazywane wątkami threads
+wątek - linuxowa abstrakcja dla jednostki pracy, zadanie do zrobienia
+scheduler zabiera wątki i umieszcza je w kolejce dostępu do procesora
+jeśli jest wiele procesorów, każdy bedzie miał swoją kolejkę
+
+nie ma tak, że kto pierwszy ten lepszy - są natomiast zasady które definiują w jaki sposób rzeczy są planowane
+
+Linux zawier akilka wbudowanych zasad policies
+
+default scheduler - SCHED_OTHER/SCHED_NORMAL
+
+TIME SHARING SCHEDULING - wątek uzyska dostęp do procesora, na określony czas, wykona część pracy, a gdy czas z harmonogrammu się skończy wróci do harmonogramu całości, a sam wątek do kolejki ponownie - będzie się to powtarzać przez cały lifetime wątku próbującego uzyskać dostęp do procesora
+
+Zapobiega to obciążeniu precesora przez pojedyńczy wątek i np spaleniu procesora
+****
+100 serwerów - nikt nie będzie tego robił ręcznie
+
+
+kilka kolejek z różnym priorytetem
+
+wątek i priorytetowość w linuxie nazwane niceness - dynamic priority list
+
+higher priority threads -> higher priority queue
+
+high priority queue - rozpatrywane w momencie kiedy procesor jest wolny do pracy
+
+numa aware software
+może być sytuacja zaplanowania wykonania wątku na innym węźle ze względu na rywalizację lub inne ograniczenia
+
+koncepcja stanu procesu
+wątki wykonywane są w stanie uruchomionym - running
+wątki gotowe do wejścia na procesor będące w kolejce - runnable
+-czekjace na zasób zewnętrzny - sleeping
+
+
+na co zwrócić uwagę monitorując CPU
+- very valuable performace meter!
+- percentage of ?60% czy będzie ok? jesli userzy są ok to jest ok. relatywizm
+- zapewnienie że nie będzie dużych odchyleń i skoków
+- jeśli system spowalna znacząco obciążenie cpu może być za duże, np 80% tym bardziej jeśli następują skoki nie do wykonania na 20%ach pozostałego zasobu
+
+- długość kolejek planowania - run queues
+
+jeśli wątek czeka na dostęp do procesora, najprawdopodobniej program czeka i jego użytkownik także
+
+średnia obciążenia - load average /// znajdziesz np w top, w, uptime, proc 
+
+
+krótkie skoki - short spikes - nie są złe
+
+jeśłi cpu wystrzeli na kilka sek lub minut a następnie wróci do swojego stanu to ok, cpu był używany
+
+jezli skacze przez dłuższy okres czasu stojąc w miejscu może wskazywać na problem z aplikacją lub zasobami, wątkiem
+warto się wówczas przyjżeć bliżej 
+
+dobrze jest znać "baseline" i wiedzieć jakie zachowania są w normie i kiedy, przy jakim działaniu aplikacji czy scenariuszu 
+
+Long waits np:
+user
+I/O sieciowe, dyskowe, zewnętrzne
+- może być to problem systemowy nie zaś procesorowy
+
+
+lscpu
+
+w lscpu info pochodzą z:
+
+cat /proc/cpuinfo
+
+
+jeśłi sys przestanie działać z racji wykonywania jakiegoś procesu żeby podjąć działania naprawcze należało go będzie skillować
+
+a jeśli jest to porces ze względów np biznesowych nie do skillowania
+
+
+
+load average vs cpu usage
+
+load average - average length of the run queue for each of our cpu-s
+
+w nrzędziu "top" jest load average w trzech kolumnach 1 - LA dla 1 minuty, 2 - dla 5 min; 3 - dla 15 min
+
+np w ciągu ostatnich 15 min było 1.42 procesa w kolejce do uruchomienia
+
+
+
+%CPUs: 1 us (user processes %), 
+2 sy (system procs %), 
+3 ni (nices procs), 
+4 id (idle CPU - proces bezczynności), 
+5 wa (waits, kiedy cpu czeka na external things jest tu generowana liczba), 
+6 hi (przerwania programowe), 
+7 st (stolen times, from hypervisor of VM)
