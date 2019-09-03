@@ -10,18 +10,23 @@
 6. [iSCSI - Internet Small Computer Systems Interface](#question6)
 7. [Systemd/Init](#question7)
 8. [Journald - Systemd log](#question8)
-9. [Monitoring - CPU](#question9)
-10. [Journald - Systemd log](#question10)
-11. [Journald - Systemd log](#question11)
-12. [Journald - Systemd log](#question12)
+9. [Monitoring & Performance - CPU](#question9)
+10. [Monitoring & Performance - RAM](#question10)
+11. [Monitoring & Performance - Dyski](#question11)
+13. [Pakiety, rpm, yum](#question13)
+12. [Monitoring & Performance - Network](#question12)
+12. [Monitoring & Performance - Network](#question12)
+12. [Monitoring & Performance - Network](#question12)
+12. [Monitoring & Performance - Network](#question12)
+12. [Monitoring & Performance - Network](#question12)
 
 
 <a name="question1"></a>
 ## 1. Basic File System
 
-Wszystko w Linuxach ma reprezentację w postaci pliku np. pliki; katalogi; urządzenia; network sockets (gniazda) itd.
+- Wszystko w Linuxach ma reprezentację w postaci pliku np. pliki; katalogi; urządzenia; network sockets (gniazda) itd.
 
-File system tree - Filesystem Hierarchy Standard (FHS) - definiuje standardy nazw; root - punkt poczatkowy.
+- File system tree - Filesystem Hierarchy Standard (FHS) - definiuje standardy nazw; root - punkt poczatkowy.
 
 `/`
     najwyższy poziom systemu plików
@@ -108,7 +113,7 @@ absolute dirs vs relative dirs
 to samo ID pliku
 
 
-Komendy: Pliki
+Komendy: pliki
 
     touch 
     rm 
@@ -117,7 +122,7 @@ Komendy: Pliki
     less/more
     head/tail       (glowa i ogon 10 pierwszych i ostatnich linii pliku)
 
-Komendy: Katalogi
+Komendy: katalogi
 
     mkdir
     rm 
@@ -150,16 +155,16 @@ Typ urządzenia we właściwościach pliku:
 
 informacje przekazywane do kernela jądra systemu jakich ma użyć urządzeń
 
-major device number
+- major device number
 
-minor device number
+- minor device number
 
 jeden dysk ma ten sam major dev number// ten sam scsi // ten sam driver
 
-minor - podział na partycje
+- minor - podział na partycje
 
 
-### Partycje; MBR i GPT
+### Partycje; format danych MBR i GPT
 Partycje na jednym dysku MBR: do 16 miejsc; do 4 partycji primary na jednym urządzeniu dysku; pozostałe extended / logical
 
 GUID/GPT dla wiekszych dysków, do 128 partycji + backup primary GPT na końcu urządzenia
@@ -195,11 +200,11 @@ W parted nie ma sieci bezpieczeństwa w postaci zatwierdzenia fdiskowego 'w'.
 
 ### System plików: xfs i ext
 
-Red Hat 7: xfs - skalowalny
+- Red Hat 7: xfs - skalowalny
 
-*przed Red Hat 7 system plików: ext np. Red Hat 6: ext4
+- *przed Red Hat 7 system plików: ext np. Red Hat 6: ext4
 
-Partycje raw - bez systemu plików
+- partycje raw - bez systemu plików
 
 Stwórz system plików (formatowanie):
 
@@ -260,15 +265,14 @@ Sprawdzenie urządzeń i ich systemu plików:
     blkid
     lsblk --fs
 
-### SuperBlock
-SuperBlock jest super ważny
+### Super Block
+- Super Block jest super ważny
 
-Każdy system plików UNIX ma przynajmniej jeden SB
+- każdy system plików UNIX ma przynajmniej jeden Super Block
 
-bez super bloku nie ma dostępu do plików
+- bez super bloku nie ma dostępu do plików
 
-
-zawiera metadane dot sys plików ktorego dotyczy
+- zawiera metadane dot sys plików ktorego dotyczy
 
 
     dumpe2fs /dev/xvdf1 | less 
@@ -278,19 +282,20 @@ zawiera metadane dot sys plików ktorego dotyczy
 
 ### Inode - węzeł indexu
 
-tradycja systemów UNIX
+- tradycja systemów UNIX
 
-w sys plików każdy plik ma swój osobny inode, każdy dir także, każdy obiekt w systemie
+- w sys plików każdy plik ma swój osobny inode, każdy dir także, każdy obiekt w systemie
 
-sys ma określoną liczbę wolnych inodeów które można zapisać
+- sys ma określoną liczbę wolnych inodeów które można zapisać
+
 
     ls -i /etc
 
 
 ### UUID (128 bit hash)
-lepiej pracować z UUID, a nie z plikami urządzeń na których są ustawione
+- lepiej pracować z UUID, a nie z plikami urządzeń na których są ustawione
 
-UUID nie zmieniają się po reboocie, pliki natomiast mogą się zmienić
+- UUID nie zmieniają się po reboocie, pliki natomiast mogą się zmienić
 
 
     blkid
@@ -300,7 +305,7 @@ UUID nie zmieniają się po reboocie, pliki natomiast mogą się zmienić
     fsck /dev/xvdf1 
 
 
-disk free tool
+Disk Free tool
 
     df -h 
     df -ih /// z inodeami
@@ -344,19 +349,22 @@ if pvcreate command not foud:
     yum install -y lvm2
 
 
-good habit: działanie na partycjach na spodzie, nie zaś na samym urządzeniu
+- good habit: działanie na partycjach, nie na samym urządzeniu
+
 
     pvcreate /dev/xvdf1
+
+- good habit: jeden Physical Volume na jedno fizyczne urządzenie 
+
+
+    pvremove /dev/xvdf1 /dev/xvdg1
 
 label LVM metadane
 
     pvdisplay /dev/xvdf1
     pvdisplay /dev/xvdf1 -vvv
 
-good habit:
-jeden Physical Volume na jedno fizyczne urządzenie 
 
-    pvremove /dev/xvdf1 /dev/xvdg1
 
 *nie jest tak łatwe jeśli PV jest cześcią Volume Group
 
@@ -366,20 +374,22 @@ jeden Physical Volume na jedno fizyczne urządzenie
 lvm2 - format zachowany (lvm1 dinozaury)
 
 
-*PV - woda w basenie
+- PV - woda w basenie
 
-*VG - ściany basenu i podłoga
+- VG - ściany basenu i podłoga
 
-    vgcreate vg_test /dev/xvdf1          
-        out: Volume group "vg_test" successfully created                                                    
-    vgdisplay vg_test 
-    vgs 
-    vgs -v
-    vgdisplay vg_test                                                                                               
+
+    151  vgcreate vg_test /dev/xvdf1          
+         out: Volume group "vg_test" successfully created  
+                                                          
+    151  vgdisplay vg_test 
+    151  vgs 
+    151  vgs -v
+    151  vgdisplay vg_test                                                                                               
     151  vgs                                                                                                             
     152  vgs -v                                                                                                    
     
-    vgcreate vg_test_pod --physicalextentsize 16 /dev/xvdg1                                                         
+    151  vgcreate vg_test_pod --physicalextentsize 16 /dev/xvdg1                                                         
     155  vgs -v                                                                     
     156  vgremove vg_test_pod                                                                                            
     158  vgdisplay vg_test -v                                                                      
@@ -387,17 +397,14 @@ lvm2 - format zachowany (lvm1 dinozaury)
     160  vgdisplay vg_test -v                                                                                     
 
 ### Physical Extents
-physical extents -> volume groups -> logical extents
+- physical extents -> volume groups -> logical extents
 
-domyślnie PE jest stały i wynosi 4096 KB (4 MB)
+- domyślnie PE jest stały i wynosi 4096 KB (4 MB);
+  tzn. że x100 extents = 400 MB; x250 PE = 1 GB
 
-tzn. że 100 extentsów daje 400 MB
+- rozmiar PE można nadać tylko raz przy tworzeniu grupy VG jeśli nie jest domyślny (4096)
 
-a x250 PE = 1 GB
-
-rozmiar PE można nadać tylko raz przy tworzeniu grupy VG jeśli nie jest domyślny (4096)
-
-nie można ich zmieniać w trakcie dla innych LVM działających w obrębie grupy
+- nie można ich zmieniać w trakcie dla innych LVM działających w obrębie grupy
 
 
     lvcreate -L 1G -n lv_test vg_test             
@@ -406,7 +413,7 @@ nie można ich zmieniać w trakcie dla innych LVM działających w obrębie grup
         LV      VG      Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert                                 
         lv_test vg_test -wi-a----- 1.00g          
         
--wi-a------ wi writable/alokacja dziedziczona; a active
+- `-wi-a------ wi` writable/alokacja dziedziczona; a active
 
 
     lvcreate -L 10M -n lv_new vg_test                                                     
@@ -422,7 +429,7 @@ nie można ich zmieniać w trakcie dla innych LVM działających w obrębie grup
         brw-rw----. 1 root disk    253,   0 Jul 25 10:08 dm-0                                                                
         brw-rw----. 1 root disk    253,   1 Jul 25 10:11 dm-1 
 
-253 - numer urządzenia 253 mówi kernelowi że to LVM i jakiego stera należy użyć
+- `253` - numer urządzenia 253 mówi kernelowi, że to LVM i jakiego stera należy użyć
     
     
     mkfs -t ext4 /dev/vg_test/lv_test
@@ -435,16 +442,15 @@ nie można ich zmieniać w trakcie dla innych LVM działających w obrębie grup
         /dev/mapper/vg_test-lv_test on /lvm type ext4 (rw,relatime,seclabel) 
 
 
-
-LVM - domyślny menedżer voluminu Linuxa
+- LVM - domyślny menedżer voluminu Linuxa
 
 ### Device Mapper
 
-kernel based framework for advanced block storage management
+- kernel based framework for advanced block storage management
 
-mapuje block storage devices na inne block storage divices
+- mapuje block storage devices na inne block storage divices
 
-składa się z 3 warstw:
+Składa się z 3 warstw:
 1. target devices,
 2. mapping layer (table),
 3. mapped devices
@@ -492,30 +498,31 @@ Schemat:
 5. re-check fs
 6. re-mount fs
 
+Komendy:
 
-    1. umount /lvm                                                    
-    2. e2fsck -f /dev/vg_test/lv_test                                               
-    3.  resize2fs /dev/vg_test/lv_test 1G                                                 
-    4.  lvreduce -L -2G vg_test/lv_test           
-    5.  e2fsck -f /dev/vg_test/lv_test                                           
-    6.  mount /dev/vg_test/lv_test /lvm
+    umount /lvm                                                    
+    e2fsck -f /dev/vg_test/lv_test                                               
+    resize2fs /dev/vg_test/lv_test 1G                                                 
+    lvreduce -L -2G vg_test/lv_test           
+    e2fsck -f /dev/vg_test/lv_test                                           
+    mount /dev/vg_test/lv_test /lvm
 
 
 ### LVM snapshots
 
-kopie woluminów
+- kopie woluminów
 
-działają tylko w środowisku LVM
+- działają tylko w środowisku LVM
 
-Space Efficient - nie konsumują wolnej przestrzeni dysku; tylko kiedy zostaną wprowadzone zmiany w woluminie źródła source vol
+- Space Efficient - nie konsumują wolnej przestrzeni dysku; tylko kiedy zostaną wprowadzone zmiany w woluminie źródła source vol
 
-źródło 200GB = snap 200GB
+- źródło 200GB = snap 200GB
 
 
 
-Point of Time (PiT)
+#### Point of Time (PiT)
 
-dokładna kopia źródła w czasie którym została wykonana
+-  dokładna kopia źródła w czasie którym została wykonana
 
 
     219  lvcreate -L 10M -s -n snap_lv_test /dev/vg_test/lv_test                            
@@ -530,30 +537,33 @@ dokładna kopia źródła w czasie którym została wykonana
     228  umount /lvm                                               
     229  lvconvert --merge vg_test/snap_lv_test
 
-na snapach można zapisywać/modyfikować je tak, że uruchomione mergem przeniosą zmodyfikowane dane
+- na snapach można zapisywać/modyfikować je tak, że uruchomione mergem przeniosą zmodyfikowane dane
 
 
 Uzycie do: 
 1. PiT Recovery
 2. Testowanie
 
-można operować manualnie - np wielkością snapów poprzez:
+- można operować manualnie - np wielkością snapów poprzez:
+
 
     lvextend
 
-lub automatycznie poprzez plik:
+- lub automatycznie poprzez plik:
+ 
  
     /etc/lvm/lvm.conf
 
 
-*nie pozwól się wypełnić snapom bo zostaną zrzucone
+- nie pozwól się wypełnić snapom, bo zostaną zrzucone
+
 
     autoextend snapshot
 
 
-snapy nie są i nie powinny zastępować kopii zapasowych
+- snapy nie są i nie powinny zastępować kopii zapasowych
 
-backupy sa przechowywane z dala od danych pierwotnych
+- backupy sa przechowywane z dala od danych pierwotnych
 
 
 ### LVM Thin Provisioning
@@ -590,7 +600,7 @@ backupy sa przechowywane z dala od danych pierwotnych
 
 ### mdraid - Linux RAID
 
-mdraid działa z partycjami
+- mdraid działa z partycjami
 
 
     yum install mdadm -y
@@ -613,13 +623,13 @@ mdraid działa z partycjami
 <a name="question4"></a>
 ## 4. Network File System - NFS
 
-Linux może działać zarówno jako klient i jako serwer.
+- Linux może działać zarówno jako klient i jako serwer.
 
-linux może exportować lokalne katalogi do innych maszyn w sieci w tym samym czasie montując zdalne.
+- linux może exportować lokalne katalogi do innych maszyn w sieci w tym samym czasie montując zdalne.
 
-Single export może dawać równoczesny dostęp do multiple clients.
+- Single export może dawać równoczesny dostęp do multiple clients.
 
-export (server) -> mount & re-export (server & client) -> mount (client)
+- export (server) -> mount & re-export (server & client) -> mount (client)
 
 
 <a name="question5"></a>
@@ -716,11 +726,12 @@ Porty samby do pracy: 137, 139, 445
 <a name="question6"></a>
 ## 6. iSCSI
 
-block storage based; block-level protocol for sharing storage devices over IP network
+- block storage based; block-level protocol for sharing storage devices over IP network
 
-SAN technology for mass storage network; w odróżneiniu od NAS (block-level) technology jak NFS czy SMB (file-level)
+- SAN technology for mass storage network; w odróżneiniu od NAS (block-level) technology jak NFS czy SMB (file-level)
 
-iSCSI initiator (host cpu & host ram memory) & iSCSI target (host cpu & host ram memory)
+- iSCSI initiator (host cpu & host ram memory) & iSCSI target (host cpu & host ram memory)
+
 
     468  yum search targetcli                                                                                               
     469  yum install targetcli -y                                                                                           
@@ -760,65 +771,65 @@ klaster może zapobiec takiemu uszkodzeniu
 5. init - process id 1 - pid1
 
 ### Init:
-first 'user' process on the comp
+- first 'user' process on the comp
 
-rodzic wszystkich innych procesów; nie ma procesu nadrzędnego
+- rodzic wszystkich innych procesów; nie ma procesu nadrzędnego
 
-odpowiedzialność kernela - organizowanie i uporządkowanie usług systemowych m.in. ssh, apache, syslog, mail, gnome desktop itd.
+- odpowiedzialność kernela - organizowanie i uporządkowanie usług systemowych m.in. ssh, apache, syslog, mail, gnome desktop itd.
 
-**_przekazanie i przedstawienie użytkownikowi sprawnego użytecznego systemu_**
+- **_przekazanie i przedstawienie użytkownikowi sprawnego użytecznego systemu_**
 
 
 ### initd (system V)
-użycie skryptów do inicjacji systemu
+- użycie skryptów do inicjacji systemu
 
 ### systemd
-użycie gnizad do inicjacji systemu
+- użycie gnizad do inicjacji systemu
 
-równoległe IPC
+- **_systemd - zmiemiennik initd, wykonuje wszystkie jego funkcje_**
 
-zacząć mniej i zacząć więcej równolegle
+- zacząć mniej i zacząć więcej równolegle
 
-*co trzeba zrobić żeby usługa x zadziałała: sieć musi być podłączona żeby uruchomić apache
+- *co trzeba zrobić żeby usługa x zadziałała: sieć musi być podłączona żeby uruchomić apache
 
 #### journald
 
-process tracking - kontroluje grupy
+- process tracking - kontroluje grupy
 
+- przełączenie pomiędzy levelami - init przekierowuje do systemd
 
-**_systemd - zmiemiennik initd, wykonuje wszystkie jego funkcje_**
-
-przełączenie pomiędzy levelami - init przekierowuje do systemd
 
     ls -la /sbin/init
     pstree -np          (np: numerical printout)
 
-potomkowie procesu - usługi systemowe
+- potomkowie procesu - usługi systemowe
+
 
     ps -aux | grep ....
 
-po zastopowaniu i uruchomieniu od nowa otrzymała nowy process id, po każdym restarcie
+- po zastopowaniu i uruchomieniu od nowa otrzymała nowy process id, po każdym restarcie
 
 
 
-### systemd - architektura:
+### Systemd - architektura:
 
-1) units - jednostki - abstrakcja dla zasobów systemowych
+1) Units - jednostki - abstrakcja dla zasobów systemowych
 
-2) targets - cele - synonim poziomów działania 
+2) Targets - cele - synonim poziomów działania 
 
-3) control groups
+3) Control groups
 
 
 ### 1) units 
-abstrakcja dla zasobów systemowych - zaimplementowana jako unit file system, jako plik, mają stan:
+- abstrakcja dla zasobów systemowych - zaimplementowana jako unit file system, jako plik, mają stan: 
 
-active/inactive; activating, deactivationg (mogą przechodzić między stanami),
+     active/inactive; activating, deactivationg (mogą przechodzić między stanami),
 
-grupy unitów reprezentują stan systemu, enabled or disabled, etc/systemd/....,
+- grupy unitów reprezentują stan systemu, enabled or disabled, etc/systemd/....,
 
-zależoności - dependency: before - jednostka jest potrzebna przed aktywacją innej/after - po
-rodzaje units:
+- zależoności - dependency: before - jednostka jest potrzebna przed aktywacją innej/after - po
+
+### Rodzaje unitów:
 
 - service - starts and control daemons
 - socket (gniazdo) - hermetyzacja, komunikacja międzyprocesorowa między systemd units, wywyołuje jednostki i wysyła przez gniazdo socket; socket-based activation; unit A może przesłać wiadomość do unit B za pomocą gniazda, w ten sposób systemd uruchamia unity asynchronicznie, równolegle,
@@ -832,7 +843,7 @@ rodzaje units:
 - path - file or dir
 - timer - trggery aktywujące się w okreslonym czasie
 
-Unit files:
+#### Unit files:
 - określone zachowanie i konfiguracja 
 - raczej nie tworzymy ich od zera
 - pochodzą z instalacji software (packages)
@@ -842,17 +853,18 @@ Unit files:
         /var/run/systemd/system - runtime created
         /usr/lib/systemd/system - reinstalled with packages
 
-jeśli są w tak wielu miejscach jak działają?
 
-#### systemd - presedence (pierszeństwo)
-najmniejszy priorytet /usr/lib/
+#### Systemd - presedence (pierszeństwo)
+- najmniejszy priorytet /usr/lib/
 
-największy  /etc/
+- największy  /etc/
 
-pierszeństwo przydziela systemd
+- pierszeństwo przydziela systemd
 
-definiując unit można zastąpić jego domyślną konfigurację
-poprzez samo przenoszenie konfiguracji na wyższy priorytet umiejscowienia
+- definiując unit można zastąpić jego domyślną konfigurację
+
+- poprzez samo przenoszenie konfiguracji na wyższy priorytet umiejscowienia
+
 
     unit_name.type_extension
     httpd.service
@@ -928,12 +940,12 @@ Restart=on-failure
       152  systemctl
 
 
-### 2) targets - synonim poziomów działania 
-wcześniej były levele. 6 poziomów działania systemów, na których były uruchamane poszczegolne usługi, których wymagał system
+### 2) Targets - synonim poziomów działania 
+- wcześniej były levele. 6 poziomów działania systemów, na których były uruchamane poszczegolne usługi, których wymagał system
 
-targets - grouping of units // grupuje unity i właściwe stany
+- targets - grouping of units // grupuje unity i właściwe stany
 
-target definiuje stan systemu i które unity są uruchomione
+- target definiuje stan systemu i które unity są uruchomione
 
 #### named targets
 predefiniowane zbiory unitów  w poszczególnych stanach
@@ -964,21 +976,21 @@ Zmiana targetu:
 
 ### 3) control groups
 
-cgroups; procesy są przypisane do cgroups
+- cgroups; procesy są przypisane do cgroups
 
-cgroups są organizowane przez:
+-  cgroups są organizowane przez:
 
-1. services - usługa to zbiór procesów uruchomionych przez systemd
+    1. services - usługa to zbiór procesów uruchomionych przez systemd
 
-2. scope (zakres) to grupa porcesów uruchomionych zewnętrznie na systemd np przez terminal przez końcowego usera
+    2. scope (zakres) to grupa porcesów uruchomionych zewnętrznie na systemd np przez terminal przez końcowego usera
 
-3. slices - grupa usług i zakresów
+    3. slices - grupa usług i zakresów
 
-informacje o wydajności środowiska (runtime performace information), możemy łatwo się dowiedzieć czy jednostka zużywa zasoby systemowe: dysk , cpu, ram, sieć.
+- informacje o wydajności środowiska (runtime performace information), możemy łatwo się dowiedzieć czy jednostka zużywa zasoby systemowe: dysk , cpu, ram, sieć.
 
-możemy zastosować reguły do ograniczenia spozycia zasobów, limit pamięci z której korzysta grupa, lub liczbę danych wejściowych do zapisania na dysku, czas oczekiwania procesora, zmienić priorytet
+- możemy zastosować reguły do ograniczenia spozycia zasobów, limit pamięci z której korzysta grupa, lub liczbę danych wejściowych do zapisania na dysku, czas oczekiwania procesora, zmienić priorytet
 
-dopasowywanie zasobów systemu do swoich potrzeb
+- dopasowywanie zasobów systemu do swoich potrzeb
 
 
 
@@ -986,7 +998,7 @@ dopasowywanie zasobów systemu do swoich potrzeb
 <a name="question8"></a>
 ## 8. Journald - Systemd log
 
-usługa journald - kolekcja logów z kilku źródeł:
+Usługa journald - kolekcja logów z kilku źródeł:
 - kernel
 - syslog
 - sd_journal_print
@@ -1042,124 +1054,561 @@ Manual journald:
 
 
 <a name="question9"></a>
-## 9. 
+## 9. Monitoring & Performance- CPU
 
 
-monitoring and performace
+### Koncepy CPU
+
+- Zasadniczy cel: **wykonywanie zadań**.
+
+#### CPU memory topology:
+
+- SMP - Symmetric Multi-Process
+
+    - single memory space; procesy mogą przydzielać pamięć (allocate)
+    - ograniczone możliwości skalowania
+    - stała wydajność
+
+- NUMA - Non-Uniform Memory Access
+
+    - sekcje fizycznej pamięci są kontrolowane przez jeden lub wiele procesorów - tzw numa nodes - węzły
+    - każdy węeł zarządza swoim rozmiarem pamięci
+    - os zobaczy wszystkie procesory w ich węzłach numa, zobaczy także każdą pamięć
+    - faworyzacja procesów na węźle lokalnym (zdalny wolniej)
+    - poszukiwać pamięci zewnętrznej która może hamować wydajność
+    - systemy wiedzą o NUMa
 
 
-CPU concepts
+### Scheduler - wątki
 
-executing tasks
+- planuje zadania  - nazywane wątkami (threads)
 
-cpu memory topology:
+- wątek - linuxowa abstrakcja dla jednostki pracy, zadanie do zrobienia
 
-SMP - Symmetric Multi-Process (single memory space, której procesy mogą przydzielać pamięć (allocate))
-ograniczone możliwości skalowania
-stała wydajność
+- scheduler zabiera wątki i umieszcza je w kolejce dostępu do procesora
 
-NUMA - Non-Uniform Memory Access
-sekcje fizycznej pamięci są kontrolowane przez jeden lub wiele procesorów - tzw numa nodes - węzły
-każdy węeł zarządza swoim rozmiarem pamięci
-os zobaczy wszystkie procesory w ich węzłach numa, zobaczy także każdą pamięć
+- jeśli jest wiele procesorów, każdy bedzie miał swoją kolejkę
 
-faworyzacja procesów na węźle lokalnym (zdalny wolniej)
-poszukiwać pamięci zewnętrznej która może hamować wydajność
+- nie ma tak, że kto pierwszy ten lepszy - są natomiast zasady które definiują w jaki sposób rzeczy są planowane
 
-systemy wiedzą o numa
+- Linux zawiera kilka wbudowanych zasad (policies)
 
+- default scheduler - SCHED_OTHER/SCHED_NORMAL
 
-scheduler - wątki
-planuje zadania  - nazywane wątkami threads
-wątek - linuxowa abstrakcja dla jednostki pracy, zadanie do zrobienia
-scheduler zabiera wątki i umieszcza je w kolejce dostępu do procesora
-jeśli jest wiele procesorów, każdy bedzie miał swoją kolejkę
+- TIME SHARING SCHEDULING - wątek uzyska dostęp do procesora, na określony czas, wykona część pracy, a gdy czas z harmonogrammu się skończy wróci do harmonogramu całości, a sam wątek do kolejki ponownie - będzie się to powtarzać przez cały lifetime wątku próbującego uzyskać dostęp do procesora
 
-nie ma tak, że kto pierwszy ten lepszy - są natomiast zasady które definiują w jaki sposób rzeczy są planowane
+- Zapobiega to obciążeniu precesora przez pojedyńczy wątek i np spaleniu procesora
 
-Linux zawier akilka wbudowanych zasad policies
-
-default scheduler - SCHED_OTHER/SCHED_NORMAL
-
-TIME SHARING SCHEDULING - wątek uzyska dostęp do procesora, na określony czas, wykona część pracy, a gdy czas z harmonogrammu się skończy wróci do harmonogramu całości, a sam wątek do kolejki ponownie - będzie się to powtarzać przez cały lifetime wątku próbującego uzyskać dostęp do procesora
-
-Zapobiega to obciążeniu precesora przez pojedyńczy wątek i np spaleniu procesora
-****
-100 serwerów - nikt nie będzie tego robił ręcznie
+    - *100 serwerów - nikt nie będzie tego robił ręcznie
 
 
-kilka kolejek z różnym priorytetem
+- kilka kolejek z różnym priorytetem
 
-wątek i priorytetowość w linuxie nazwane niceness - dynamic priority list
+- wątek i priorytetowość w linuxie nazwane **_niceness_** - dynamic priority list
 
-higher priority threads -> higher priority queue
+- higher priority threads -> higher priority queue
 
-high priority queue - rozpatrywane w momencie kiedy procesor jest wolny do pracy
-
-numa aware software
-może być sytuacja zaplanowania wykonania wątku na innym węźle ze względu na rywalizację lub inne ograniczenia
-
-koncepcja stanu procesu
-wątki wykonywane są w stanie uruchomionym - running
-wątki gotowe do wejścia na procesor będące w kolejce - runnable
--czekjace na zasób zewnętrzny - sleeping
+- high priority queue - rozpatrywane w momencie kiedy procesor jest wolny do pracy
 
 
-na co zwrócić uwagę monitorując CPU
-- very valuable performace meter!
-- percentage of ?60% czy będzie ok? jesli userzy są ok to jest ok. relatywizm
-- zapewnienie że nie będzie dużych odchyleń i skoków
-- jeśli system spowalna znacząco obciążenie cpu może być za duże, np 80% tym bardziej jeśli następują skoki nie do wykonania na 20%ach pozostałego zasobu
+- numa aware software
 
+- może być sytuacja zaplanowania wykonania wątku na innym węźle ze względu na rywalizację lub inne ograniczenia
+
+**Koncepcja stanu procesu:**
+- wątki wykonywane są w stanie uruchomionym - running
+- wątki gotowe do wejścia na procesor będące w kolejce - runnable
+- czekjace na zasób zewnętrzny - sleeping
+
+
+### Na co zwrócić uwagę monitorując CPU
+- very valuable performace meter
+- percentage of: 60% czy będzie ok? jeśli dla userów to jest ok to jest ok. relatywizm
+- zapewnienie, że nie będzie dużych odchyleń i skoków
+- jeśli system spowalna znacząco obciążenie CPU może być za duże, np. 80% tym bardziej jeśli następują skoki nie do wykonania na 20%-ach pozostałego zasobu
 - długość kolejek planowania - run queues
 
-jeśli wątek czeka na dostęp do procesora, najprawdopodobniej program czeka i jego użytkownik także
+*Jeśli wątek czeka na dostęp do procesora, najprawdopodobniej program czeka i jego użytkownik także
 
-średnia obciążenia - load average /// znajdziesz np w top, w, uptime, proc 
+### Średnia obciążenia - Load Average
+- *znajdziesz np. w `top`, `w`, `uptime`, `proc` 
 
 
-krótkie skoki - short spikes - nie są złe
+- krótkie skoki - short spikes - nie są złe
 
-jeśłi cpu wystrzeli na kilka sek lub minut a następnie wróci do swojego stanu to ok, cpu był używany
+- Jeśli CPU wystrzeli na kilka sek lub minut, a następnie wróci do swojego stanu to ok, CPU był używany
 
-jezli skacze przez dłuższy okres czasu stojąc w miejscu może wskazywać na problem z aplikacją lub zasobami, wątkiem
+- Jeśli skacze przez dłuższy okres czasu stojąc w miejscu może wskazywać na problem z aplikacją lub zasobami, wątkiem
 warto się wówczas przyjżeć bliżej 
 
-dobrze jest znać "baseline" i wiedzieć jakie zachowania są w normie i kiedy, przy jakim działaniu aplikacji czy scenariuszu 
+- Dobrze jest znać "baseline" i wiedzieć jakie zachowania są w normie i kiedy, przy jakim działaniu aplikacji czy scenariuszu 
 
-Long waits np:
-user
-I/O sieciowe, dyskowe, zewnętrzne
-- może być to problem systemowy nie zaś procesorowy
+- Long waits np:
+    user
+    I/O sieciowe, dyskowe, zewnętrzne
+    - może być to problem systemowy nie zaś procesorowy
 
 
-lscpu
+    lscpu
 
 w lscpu info pochodzą z:
 
-cat /proc/cpuinfo
+    cat /proc/cpuinfo
 
 
-jeśłi sys przestanie działać z racji wykonywania jakiegoś procesu żeby podjąć działania naprawcze należało go będzie skillować
+- Jeśli sys przestanie działać z racji wykonywania jakiegoś procesu, żeby podjąć działania naprawcze należało go będzie skillować
 
-a jeśli jest to porces ze względów np biznesowych nie do skillowania
-
-
-
-load average vs cpu usage
-
-load average - average length of the run queue for each of our cpu-s
-
-w nrzędziu "top" jest load average w trzech kolumnach 1 - LA dla 1 minuty, 2 - dla 5 min; 3 - dla 15 min
-
-np w ciągu ostatnich 15 min było 1.42 procesa w kolejce do uruchomienia
+- *może być to to proces ze względów np biznesowych nie do skillowania
 
 
 
-%CPUs: 1 us (user processes %), 
-2 sy (system procs %), 
-3 ni (nices procs), 
-4 id (idle CPU - proces bezczynności), 
-5 wa (waits, kiedy cpu czeka na external things jest tu generowana liczba), 
-6 hi (przerwania programowe), 
-7 st (stolen times, from hypervisor of VM)
+### Load Average vs. CPU usage
+
+- load average - average length of the run queue for each of our cpu-s
+
+- w narzędziu `top` jest load average w trzech kolumnach
+
+- 1 - LA dla 1 minuty, 2 - dla 5 min; 3 - dla 15 min
+
+- np w ciągu ostatnich 15 min było 1.42 procesa w kolejce do uruchomienia
+
+
+`TOP` %CPUs:
+1. us (user processes %), 
+2. sy (system procs %), 
+3. ni (nices procs), 
+4. id (idle CPU - proces bezczynności), 
+5. wa (waits, kiedy cpu czeka na external things jest tu generowana liczba), 
+6. hi (przerwania programowe), 
+7. st (stolen times, from hypervisor of VM)
+
+
+
+
+<a name="question10"></a>
+## 10. Monitoring & Performance - RAM
+
+### Koncepty RAM
+
+- Procesy w sys nie mają bezpośredniego dostępu do pamięci fizycznej
+
+- Mają natomiast pamięć je reprezentującą - virtual memory
+
+- Każdy proces ma swoją własną przestrzeń adresową (process address space)
+
+- Zarówno fizyczne jak i virtualne pamięci są podzielone na strony (broken up into pages)
+
+    - page jako jednostka alokacji dla pamięci fizycznej i wirtualnej
+
+    - strona pamięci virtualnej może zostać odwzorowana na stronę pamięci fizycznej lub inny typ pamięci np na dysku twardym
+
+### Memory Management  - Swapping
+
+- SWAP - przeniesienie pamięci ram na dysk, based on its usage
+
+- jesli nie będzie ona używana przez dłuższy czas można pobrać stronę (page) pamięci, zapisać na dysk, zapisać na dysk i przekazać pamięć innej aplikacji - SWAP OUT
+- time base paging
+
+- z punktu widzenia procesu adres pamięci virtualnej nigdy się nie zmienia
+
+- fizyczny adres natomiast odwzorowuje się i jest aktualizowany w pamięci fizycznej, do bloków na dysku twardym gdzie zapisana jest strona 
+
+- innym mechanizmem na swap out jest demand paging 
+
+- manager pamięci zarządza tym przejściem (transition)
+
+- page fault - jeśli adres próbuje uzyksać stronę zapisaną już na dysku, 
+
+- manager pobierze stronę i umieści ja w pamięci fizycznej, zaktualizuje dane - SWAP IN
+
+
+#### Excessing swapping - namierne swapowanie:
+- ciągłe swapowanie in & out może oznaczać że w systemie brakuje pamięci
+nadmierne swapowanie powoduje presję na subsystemie dyskowym, spowalniając wszystkie inne operacje
+
+- dysk subsystem jest najwolniejszą cześcią komputera. pamięć główna działa w nanosekundach, dysk w mikro jesli to ssd, czy milisek jeśli to tradycyjny dysk magnetyczny
+
+- można dostosować wielkość swapowania poprzez dostosowanie szybkości procesu 
+
+- *** w bardzo specyficznych wymaganiach
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuration_tools-configuring_system_memory_capacity#sect-Red_Hat_Enterprise_Linux-Performance_Tuning_Guide-Configuring_system_memory_capacity-Virtual_Memory_parameters
+
+
+Monitoring pamięci:
+- najwięksi konsumenci zarówno fizycznej jak i virtualnej
+- kto swapuje i czy nadmiernie
+- **file system cache
+
+
+    cat /proc/meminfo | sort
+    free
+    free - m ///output in MB
+
+
+
+`top`:
+virt i res columns;
+virtual address space;
+można sprawdzić paging
+
+
+
+    vmstat 1 100 (uruchom statystykę co sekundę 100x)
+swap in i swap out: 
+kolumna io 
+BI Blocks In + BO blocks out
+
+
+    yum install dstat
+
+
+
+<a name="question11"></a>
+## 11. Monitoring & Performance - Dyski
+
+
+- Dysk słada się z sektorów (fizyczne) jednostki alokacji
+
+- sektory przechowywały bity na fizycznym dysku
+
+- block - fundamental unit of I/O z perspektywy systemu
+
+- dane są zapisywane i odczytywane z bloków
+
+- iNodes - obiekty systemu plików jak pliki czy katalogi dir
+
+- kluczowe dla monitoringu jest:
+
+    - przepustowość - bandwidth - szybkość transferu danych w MB/s lub GB/s - jak dużo danych można przenieść w danym okresie czasu
+access latency - jak szybko transakcje dyskowe przechodzą od żadania do dostarczenia żadanych danych
+
+- interconnections:
+    - internal - zainstalowane na maszynie
+    - external - dołączone 
+
+- określone profile dla obydwu typów podłączeń
+
+
+- file system
+
+    - make backup + format na nowy fs + restore backup 
+
+
+- podsystem dyskowy musi działać dobrze, w określony sposób
+
+
+- ssd nie ma opóźnień spowodowanych fizycznym obracaniem się talerza dysku i dostęp do kolejnego i kolejnego bloku (magnetic)
+
+    - sekwencyjny dostęp 
+
+    - random dostęp - nie dane czytane sektor po sektorze
+
+- 4KB - default block size w XFS
+
+- dostosowanie np do baz danych np jeśli dane wprowadzane są zawsze w 16 KB moglibyśmy chcieć dostosować rozmair bloku
+zminimalizowanie logical IOs (wejść/wyjść/sek) które system będzie musiał zrobić
+
+    - nie ma znaczenia jeśli chodzi o zczytanie z dysku, ale o uruchomienie ścieżek dostarczenia do systemu
+
+    - domyślnie dobrze jest trzymać się 4KB
+
+
+- mount time options
+disable access times:noatime;
+wchodząc w interakcję z plikiem linuxowym zapisuje on czas tej reakcji w metadanych;
+wylaczenie tej opcji moze poprawić wydajność;
+ro - read only;
+
+
+Wydajność:
+
+- dysk - najwolniejsza część w komputerze; ssd nieco przyśpiesza ich działanie
+
+- swapping spowalnia
+
+- caching pomaga
+
+- baseline
+
+- wolne miejsce
+
+
+
+    yum install iotop
+
+    iotop
+
+    blockdev --getbsz /dev/sda2
+    
+
+
+<a name="question12"></a>
+## 12. Monitoring & Performance - Network
+
+- network interface
+
+- bandwidth (np b/s; GB/s)
+
+- latency (ms)
+
+- buffers
+
+- queues (larger resources)
+
+
+#### Proces przekazywania danych w sieci - Linux:
+
+
+1. dane wchodzą do interfejsu sieciowego + internal buffer
+
+    os przerywa proces interfejsu przekazując dane do
+
+2. network stacka wewnątrz kernela + buffer
+
+    decyzja o przekazaniu ramki którą odebrał: keep (forward) or discard; następnie 
+
+3. socket queue
+
+4. aplikacja
+
+
+
+### Monitoring:
+
+- saturation interface - nasycenie interfejsu (pojemność)
+    - dodanie interfejsów w razie radzenia sobie lub zwiększenie przepustowości z 1 do 10 GB
+
+- latency 
+
+- nadmierne przerywanie (izolacja procesu i diagnozowanie w razie czego)
+    - np przy iSCSI przy przenoszeniu pamięci blokowej przez sieć LAN przy wydajnych sys baz danych
+
+- kolejkowanie w interfejsach
+
+- zrzucanie pakietów (optymalizacja TCP)
+
+
+    yum install iptraf-ng
+    iptraf-ng
+
+
+
+TCP sockets - both-directional; utility to investigating socket
+
+    ss -t4 
+
+
+
+- Ważne poznanie "baseline"
+
+    - wiesz jak działają normalnie
+    - znasz wzory
+    - znasz prawidłowe zużycie pamięci dysku cpu itd
+    - ochylenia od normy - deviations
+
+- Testowanie nowego systemu i jego wydajności przed wdrożeniem na produkcję
+
+    - overall benchmarking (sprawdzanie wydajności systemu jako całości)
+    - isolated benchmarking
+
+
+- Monitoring ważny - nie możesz podejmować decyzji bez danych
+
+- `sysstat`
+    - iostat, cifsiostat, nfsiostat
+    - mpstat, pidstat
+    - sar - system activity reporter
+    - dstat
+    - systat - możliwość raportowania info o wydajności
+
+Info o działaniu:
+
+    cat /etc/cron.d/sysstat
+
+Dane przechowywane w plikach binarnych
+
+`sadc` - system activity data collector
+
+samo wpisanie komendy poniżej wygeneruje raport
+
+    /usr/lib64/sa/sa2 -A
+    
+    vi /etc/sysconfig/sysstat
+
+
+raport sar z `/etc/cron.d/sysstat`; otworzysz normalnie - jest tekstowy
+
+`sa` są binarne
+
+
+    sar -u              /// cpu utilization % with the time
+    sar -q              /// load average
+    sar -q -f sa01      /// -f file
+    sar -q -1           /// minus 1 dzień
+    sar -A              /// sar activity report
+    
+    sar -A | more       /// poruszanie strzałkami 
+    
+    sar -A -s 09:50:00
+    sar -A -s 09:50:00 -e 10:10:00 (start + end)
+
+    sadf -d | head
+    sadf -d > out.csv ///-d jako dane arkusza kalkulacyjnego
+
+
+- dstat
+
+
+    yum install dstat
+    
+    dstat
+    dstat --tcp
+    dstat --all --tcp
+    dstat -t --all --tcp
+
+
+<a name="question13"></a>
+## 13. Pakiety, rpm, yum
+
+
+- Zależności i ich konfigurowanie było problematyczne kiedy nowe programy dociągało się i instalowało 
+
+- czasami zależności było dużo
+
+
+- rpm - redhat packet manager
+
+
+    /usr/share/doc
+
+
+rpm:
+- pliki, foldery, biblioteki, skrypty, pliki binarne
+- dokumentacje
+- metadane
+- wersjonowanie
+- info o pakietach rpm w bazie danych systemu
+- weryfikowalne
+- nazewnictwo "szeregowe"
+
+rpm manager:
+- build - kompilacja źródła do binary rpm
+- install
+- query - zapytanie do bazy danych o zakres informacji metadanych
+- verify - weryfikacja i porównanie pakietów zainstalowanych z innymi
+- upgrade - aktualizacja lub instalacja jeśli pakiet nie jest zainstalowany
+- freshen - aktualizacja tylko jesli pakiet jest zainstalowany
+- erase - odinstalowanie
+
+
+    rpm -qip nazwa_pakietu.rpm              / metadane z grubsza
+    rpm -qlp nazwa_pakietu.rpm              / pliki w pakiecie
+    rpm -qlp nazwa_pakietu.rpm | more
+    rpm -K nazwa_pakietu.rpm                / zweryfikować rpm poprzez zgodność podpisu, suma MD5, pakiet nie będzie poprawnie zweryfikowany jeśli cokolwiek wewnątrz pakietu ulegnie zmianie      
+    
+    rpm -ivh nazwa_pakietu.rpm              / instalacja
+    rpm -q  nazwa_pakietu.rpm               / czy jest zainstalowany
+    rpm -qa                                 / wszystkie qa zainstalowane w systemie
+    rpm -qf /etc/firewalld                  / zapytaj o plik (query file) i dane z której/jakiej paczki pochodzi?
+    
+    rpm -qi packet_output_name.rpm          / informacje z bazy systemu o rpm a nie jak poprzednio -qip z katalogu lokalnegow którym znajduje się paczka
+    rpm -e mc                               / e: erase, po zakończeniu pracy na pakiecie
+    rpm -U nazwa_pakietu.rpm                / upgrade
+    rpm -Vv firewalld                       / co sie zmieniło w stosunku do pierwszej wersji
+    
+    rpm2cpio nazwa_pakietu.rpm | cpio       / przepuszczenie pakietu przez archiwum - jeśli pliki się zgubiły można je tam odnaleźć/odzyskać
+    
+
+
+
+
+### built own rpm packages
+
+vault.centos.org
+
+
+    cat /etc/centos-release
+
+    rpm -qlp nazwa.rpm                      / podejrzyj pliki wewnątrz paczki
+
+- jeśli jest wewnątrz plik 
+    - .tar.xz - są to źródłowe pliki
+    - .spec - specyfikacja budowania paczek
+
+
+    rpm2cpio nazwa.rpm | cpio -id           / rozpakuje archiwum rpm
+    tar -xf nazwa.tar.xf                    / rozpakuje plik tar do nowego dir
+
+
+- komponenty do budowania własnych pakietów rpm
+
+
+    yum group install "Development Tools"
+
+    rpmbuild --rebuild nazwea_pakietu.rpm
+
+- jeśli pojawai sie failed dependencies tzn. że trzeba zainstalować podane pakiety
+
+
+    yum install ncurses-devel ......
+
+- nie ma w tym katalogu gdzie tworzyliśmy tylko w głównym użytkownika 
+
+- ***uważać na tworzenie paczek spod roota - ma duże możliwości także zmian na systemie
+
+
+    ls -R rpmbuild                     / recursive ls
+    
+    yum info rpmdevtools
+
+- umieszczenie plików w SOURCES i w SPEC: napisanie pliku w spec na podstawie templatki
+
+- deployment tak stworznego pliku na innych maszynach
+
+
+
+### YUM - Yellowdog Updater Management
+
+
+    yum check-update
+    yum update
+    yum check-update
+    
+    yum group list
+    yum group info "basic web server"
+    yum group install "basic web server"
+    
+    
+- update vs upgrade - usunięcie przestarzałych plików
+
+    
+    yum list tuned                                      / pokaże zainstalowane paczki
+    yum search tuned
+    yum provides top
+    yum provides firewalld
+    yum provides  ....
+    
+    yum list installed
+
+
+yumdownloader procps-ng
+
+pakiety które można przenieść do dowolnego komputera w naszym data center
+
+
+
+#### Repozytoria
+
+- Większość oprogramowania do sprawnego utrzymania systemów na repo producentów jak RH, centos
+
+    - 3-rd parties - epel, rpmforge
+    - własne
+
+
+używać uwierzytelnionych repo
+
+    /etc/yum.conf
+    /var/log/yum.log
+
+
