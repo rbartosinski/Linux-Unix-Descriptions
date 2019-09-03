@@ -134,7 +134,7 @@ Linux łączy się z urządzeniami za pomocą plików w systemie plików UNIX.
 
     ls -l /dev | grep sda
 
-###Fdisk i Parted
+### Fdisk i Parted
 Narzędzia do zarządzania urządzeniami, partycjami, systemami plików.
 
     parted
@@ -190,7 +190,7 @@ do GPT użyć parted (nie fdisk)
 W parted nie ma sieci bezpieczeństwa w postaci zatwierdzenia fdiskowego 'w'.
 
 
-###System plików: xfs i ext
+### System plików: xfs i ext
 
 Red Hat 7: xfs - skalowalny
 
@@ -203,7 +203,7 @@ Stwórz system plików (formatowanie):
     mke2fs -t ext4 /dev/xvdf1
 
                                                                           
-###Montowanie systemu plików:
+### Montowanie systemu plików:
 
         Tworzenie katalogu do montowania:
     78  mkdir /testmount                                                       
@@ -245,7 +245,7 @@ Stwórz system plików (formatowanie):
     121  ls                                                                                                      
 
 
-###Montowanie stałe (persistent mounting):
+### Montowanie stałe (persistent mounting):
 
 fstab - file system table
 
@@ -257,7 +257,7 @@ Sprawdzenie urządzeń i ich systemu plików:
     blkid
     lsblk --fs
 
-###SuperBlock
+### SuperBlock
 SuperBlock jest super ważny
 
 Każdy system plików UNIX ma przynajmniej jeden SB
@@ -273,7 +273,7 @@ zawiera metadane dot sys plików ktorego dotyczy
 
 
 
-###Inode - węzeł indexu
+### Inode - węzeł indexu
 
 tradycja systemów UNIX
 
@@ -284,7 +284,7 @@ sys ma określoną liczbę wolnych inodeów które można zapisać
     ls -i /etc
 
 
-###UUID (128 bit hash)
+### UUID (128 bit hash)
 lepiej pracować z UUID, a nie z plikami urządzeń na których są ustawione
 
 UUID nie zmieniają się po reboocie, pliki natomiast mogą się zmienić
@@ -322,7 +322,7 @@ disk free tool
 <a name="question3"></a>
 ## 3. Logical Volume Manager  - LVM
 
-###Physical Volumes, Volume Groups, Logical Volumes
+### Physical Volumes, Volume Groups, Logical Volumes
 Physical Volumes
     
     /dev/sda 200 GB + /dev/sdb 200GB
@@ -383,7 +383,7 @@ lvm2 - format zachowany (lvm1 dinozaury)
     159  vgextend vg_test /dev/xvdg1                                                                                     
     160  vgdisplay vg_test -v                                                                                     
 
-###Physical Extents
+### Physical Extents
 physical extents -> volume groups -> logical extents
 
 domyślnie PE jest stały i wynosi 4096 KB (4 MB)
@@ -435,7 +435,7 @@ nie można ich zmieniać w trakcie dla innych LVM działających w obrębie grup
 
 LVM - domyślny menedżer voluminu Linuxa
 
-###Device Mapper
+### Device Mapper
 
 kernel based framework for advanced block storage management
 
@@ -446,15 +446,15 @@ składa się z 3 warstw:
 2. mapping layer (table),
 3. mapped devices
 
-####1. target devices
+#### 1. target devices
 
     /dev/sda
     /dev/sdb
 
-####2. mapping layer
+#### 2. mapping layer
  device mapper
 
-####3. mapped devices
+#### 3. mapped devices
     /dev/mapper/<dev>
 
 
@@ -466,7 +466,7 @@ lvm, dm-multipath  - na poziomie użytkownika
 
 linear mapped devices
 
-###Zwiększanie LVM
+### Zwiększanie LVM
       138  lvextend -L2G /dev/vg_test/lv1                                                                                     
       139  lvs                                                                                                                
       140  lvextend -L2G /dev/vg_test/lv_test                                                                                                                                                                                     
@@ -476,7 +476,7 @@ linear mapped devices
       148  resize2fs /dev/vg_test/lv_test 
 
 
-###Zmniejszanie LVM
+### Zmniejszanie LVM
 **backup danych wczesniej, inaczej operacja może okazać się niemiła w skutkach
 
 Schemat:
@@ -498,7 +498,7 @@ Schemat:
     6.  mount /dev/vg_test/lv_test /lvm
 
 
-###LVM snapshots
+### LVM snapshots
 
 kopie woluminów
 
@@ -553,7 +553,7 @@ snapy nie są i nie powinny zastępować kopii zapasowych
 backupy sa przechowywane z dala od danych pierwotnych
 
 
-###LVM Thin Provisioning
+### LVM Thin Provisioning
 
     252  lvcreate -L 100M tp_pool vg_test                                                                                   
     253  lvcreate -L 100M --thinpool tp_pool vg_test                                                                        
@@ -585,7 +585,7 @@ backupy sa przechowywane z dala od danych pierwotnych
     277  mkfs.ext4 /dev/vg_test/tp2_lv_test
 
 
-###mdraid - Linux RAID
+### mdraid - Linux RAID
 
 mdraid działa z partycjami
 
@@ -624,7 +624,7 @@ export (server) -> mount & re-export (server & client) -> mount (client)
 
 Porty samby do pracy: 137, 139, 445
 
-###Konfiguracja serwera Samba:
+### Konfiguracja serwera Samba:
 
 1. Instalacja
 
@@ -686,7 +686,7 @@ Porty samby do pracy: 137, 139, 445
 
 
 
-###Konfiguracja klienta Samba:
+### Konfiguracja klienta Samba:
 
     rpm -q samba-client                                                               
     yum install samba-client -y                                                                        
@@ -749,14 +749,14 @@ klaster może zapobiec takiemu uszkodzeniu
 ## 7. systemd/init
 
 
-###Start komputera:
+### Start komputera:
 1. bios/uefi
 2. bootable device (mbr/gpt)
 3. boot loader (linux: grub)
 4. kernel
 5. init - process id 1 - pid1
 
-###Init:
+### Init:
 first 'user' process on the comp
 
 rodzic wszystkich innych procesów; nie ma procesu nadrzędnego
@@ -766,10 +766,10 @@ odpowiedzialność kernela - organizowanie i uporządkowanie usług systemowych 
 **_przekazanie i przedstawienie użytkownikowi sprawnego użytecznego systemu_**
 
 
-###nitd (system V)
+### nitd (system V)
 użycie skryptów do inicjacji systemu
 
-###systemd
+### systemd
 użycie gnizad do inicjacji systemu
 
 równoległe IPC
@@ -778,7 +778,7 @@ zacząć mniej i zacząć więcej równolegle
 
 *co trzeba zrobić żeby usługa x zadziałała: sieć musi być podłączona żeby uruchomić apache
 
-####journald
+#### journald
 
 process tracking - kontroluje grupy
 
@@ -798,7 +798,7 @@ po zastopowaniu i uruchomieniu od nowa otrzymała nowy process id, po każdym re
 
 
 
-###systemd - architektura:
+### systemd - architektura:
 
 1) units - jednostki - abstrakcja dla zasobów systemowych
 
@@ -807,7 +807,7 @@ po zastopowaniu i uruchomieniu od nowa otrzymała nowy process id, po każdym re
 3) control groups
 
 
-###1) units 
+### 1) units 
 abstrakcja dla zasobów systemowych - zaimplementowana jako unit file system, jako plik, mają stan:
 
 active/inactive; activating, deactivationg (mogą przechodzić między stanami),
@@ -841,7 +841,7 @@ Unit files:
 
 jeśli są w tak wielu miejscach jak działają?
 
-####systemd - presedence (pierszeństwo)
+#### systemd - presedence (pierszeństwo)
 najmniejszy priorytet /usr/lib/
 
 największy  /etc/
@@ -879,14 +879,14 @@ execstart = program binarny ktory będzie uruchomiony
 Restart=on-failure
 
 
-###2) targets - synonim poziomów działania 
+### 2) targets - synonim poziomów działania 
 wcześniej były levele. 6 poziomów działania systemów, na których były uruchamane poszczegolne usługi, których wymagał system
 
 targets - grouping of units // grupuje unity i właściwe stany
 
 target definiuje stan systemu i które unity są uruchomione
 
-####named targets
+#### named targets
 predefiniowane zbiory unitów  w poszczególnych stanach
 1. poweroff(0)
 2. rescue(1) - single user mode
@@ -894,7 +894,7 @@ predefiniowane zbiory unitów  w poszczególnych stanach
 4. graphical(5)
 5. reboot(6)
 
-####additional targets:
+#### additional targets:
 1. emergency - read only root
 2. hibernate - saves state to disk & power is down
 3. suspend - saves state in RAM & low power mode
@@ -909,7 +909,7 @@ na liście wszystkich targetów są też targety typou system wyłączony, tryb 
 
 
 
-###3) control groups
+### 3) control groups
 
 cgroups; procesy są przypisane do cgroups
 
