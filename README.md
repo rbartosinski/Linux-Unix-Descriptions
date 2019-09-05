@@ -5763,7 +5763,7 @@ dstat
 <a name="question31"></a>
 # Passed trainings certs: RedHat Open, Pluralsight
 
-<img alt="Screen" src="trainings-certs/certificate_RHEL_Implemetation_1" width="800">
+<img alt="Screen" src="trainings-certs/certificate_RHEL_Implemetation_1.JPEG" width="800">
 
 <img alt="Screen" src="trainings-certs/certificate_System_Administration_1.JPEG" width="800">
 
