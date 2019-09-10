@@ -2854,12 +2854,12 @@ if pvcreate command not foud:
     yum install -y lvm2
 
 
-- good habit: działanie na partycjach, nie na samym urządzeniu
+good habit: działanie na partycjach, nie na samym urządzeniu
 
 
     pvcreate /dev/xvdf1
 
-- good habit: jeden Physical Volume na jedno fizyczne urządzenie 
+good habit: jeden Physical Volume na jedno fizyczne urządzenie 
 
 
     pvremove /dev/xvdf1 /dev/xvdg1
@@ -2879,9 +2879,9 @@ label LVM metadane
 lvm2 - format zachowany (lvm1 dinozaury)
 
 
-- PV - woda w basenie
+PV - woda w basenie
 
-- VG - ściany basenu i podłoga
+VG - ściany basenu i podłoga
 
 
     151  vgcreate vg_test /dev/xvdf1          
@@ -2911,6 +2911,7 @@ lvm2 - format zachowany (lvm1 dinozaury)
 
 - nie można ich zmieniać w trakcie dla innych LVM działających w obrębie grupy
 
+Wykonanie:
 
     lvcreate -L 1G -n lv_test vg_test             
         Logical volume "lv_test" created.                                                                                
@@ -2918,7 +2919,7 @@ lvm2 - format zachowany (lvm1 dinozaury)
         LV      VG      Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert                                 
         lv_test vg_test -wi-a----- 1.00g          
         
-- `-wi-a------ wi` writable/alokacja dziedziczona; a active
+`-wi-a------ wi` writable/alokacja dziedziczona; a active
 
 
     lvcreate -L 10M -n lv_new vg_test                                                     
@@ -2934,7 +2935,7 @@ lvm2 - format zachowany (lvm1 dinozaury)
         brw-rw----. 1 root disk    253,   0 Jul 25 10:08 dm-0                                                                
         brw-rw----. 1 root disk    253,   1 Jul 25 10:11 dm-1 
 
-- `253` - numer urządzenia 253 mówi kernelowi, że to LVM i jakiego stera należy użyć
+`253` - numer urządzenia 253 mówi kernelowi, że to LVM i jakiego stera należy użyć
     
     
     mkfs -t ext4 /dev/vg_test/lv_test
@@ -3027,7 +3028,7 @@ Komendy:
 
 #### Point of Time (PiT)
 
--  dokładna kopia źródła w czasie którym została wykonana
+dokładna kopia źródła w czasie którym została wykonana
 
 
     219  lvcreate -L 10M -s -n snap_lv_test /dev/vg_test/lv_test                            
@@ -3049,18 +3050,18 @@ Uzycie do:
 1. PiT Recovery
 2. Testowanie
 
-- można operować manualnie - np wielkością snapów poprzez:
+można operować manualnie - np wielkością snapów poprzez:
 
 
     lvextend
 
-- lub automatycznie poprzez plik:
+lub automatycznie poprzez plik:
  
  
     /etc/lvm/lvm.conf
 
 
-- nie pozwól się wypełnić snapom, bo zostaną zrzucone
+nie pozwól się wypełnić snapom, bo zostaną zrzucone
 
 
     autoextend snapshot
@@ -3105,7 +3106,7 @@ Uzycie do:
 
 ### mdraid - Linux RAID
 
-- mdraid działa z partycjami
+mdraid działa z partycjami
 
 
     yum install mdadm -y
