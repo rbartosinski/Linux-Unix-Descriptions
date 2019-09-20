@@ -1138,6 +1138,7 @@ rpm manager:
 - freshen - aktualizacja tylko jesli pakiet jest zainstalowany
 - erase - odinstalowanie
 
+rpm -q
 
     rpm -qip nazwa_pakietu.rpm              / metadane z grubsza
     rpm -qlp nazwa_pakietu.rpm              / pliki w pakiecie
@@ -1173,6 +1174,7 @@ vault.centos.org
     - .tar.xz - są to źródłowe pliki
     - .spec - specyfikacja budowania paczek
 
+exaple
 
     rpm2cpio nazwa.rpm | cpio -id           / rozpakuje archiwum rpm
     tar -xf nazwa.tar.xf                    / rozpakuje plik tar do nowego dir
