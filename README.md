@@ -335,6 +335,8 @@ Systemowe zadania CRON zdefiniowane w:
 
     /etc/crontab
     /etc/cron.d/*
+    
+    crontab -e
 
 #### Predefiniowane zadania
 - Uruchamianie: co godzinę, dzień, tydzień, miesiąc
