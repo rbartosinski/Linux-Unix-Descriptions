@@ -2585,6 +2585,7 @@ Monitoring pamięci:
 - kto swapuje i czy nadmiernie
 - **file system cache
 
+Monitoring:
 
     cat /proc/meminfo | sort
     free
