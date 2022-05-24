@@ -1,6 +1,8 @@
 # Linux/Unix - Descriptions about management and administrating
  Knowledge base about basics and standards in Linux/Unix management (RHEL, CentOS)
 
+Add some code for check git.
+
 [System management](#question1)
 
 1. [Shell](#question2)
